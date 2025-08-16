@@ -29,6 +29,9 @@ function Header({
               Please set points to play (Greater than 0)
             </p>
           )}
+          {points > 20000 && (
+            <p className="text-[13px]">Performance not enough for 20000+</p>
+          )}
         </div>
       </div>
       <div className="flex gap-[113px] items-center mt-1 justify-start">

@@ -21,15 +21,17 @@ function GameBoard({
   }, [playing, status]);
 
   const onTick = () => {
-    setNumbers((num) =>
-      num
-        .map((n) =>
-          n.done && n.lifetime > 0
-            ? { ...n, lifetime: +(n.lifetime - 0.1).toFixed(1) }
-            : n
-        )
-        .filter((n) => n.lifetime > 0)
-    );
+    setNumbers((nums) => {
+      let changed = false;
+      const next = nums.map((n) => {
+        if (n.done && n.lifetime > 0) {
+          changed = true;
+          return { ...n, lifetime: +(n.lifetime - 0.1).toFixed(1) };
+        }
+        return n;
+      });
+      return changed ? next.filter((n) => n.lifetime > 0) : nums;
+    });
   };
   return (
     <div>
@@ -52,7 +54,7 @@ function GameBoard({
             );
           })}
       </div>
-      {playing && points >= target && (
+      {playing && status !== "GAME OVER" && points >= target && (
         <p className="text-base"> Next: {target}</p>
       )}
     </div>

@@ -56,9 +56,7 @@ function Game() {
   }, [numbers, playing]);
 
   const handleStart = function () {
-    if (points < 1) {
-      return;
-    }
+    if (points < 1) return;
     setNumbers(makeNumbers(points));
     setPlaying(true);
   };
@@ -85,7 +83,7 @@ function Game() {
     setAutoPlay(!autoPlay);
   };
   const handleNumberClick = function (id) {
-    console.log(`Clicked number: ${id}, Target: ${target}, numbers:`, numbers);
+    // console.log(`Clicked number: ${id}, Target: ${target}, numbers:`, numbers);
     if (id !== target) {
       handleGameOver();
       return;
