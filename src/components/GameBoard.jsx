@@ -1,19 +1,52 @@
+import { useEffect } from "react";
 import NumCircle from "./NumCircle";
 
-function GameBoard({ numbers = [], onNumberClick, target, playing }) {
+function GameBoard({
+  numbers = [],
+  target,
+  status,
+  onNumberClick,
+  playing,
+  setNumbers,
+}) {
+  useEffect(() => {
+    if (!playing || status === "GAME OVER") return;
+
+    const timer = setInterval(() => {
+      onTick();
+    }, 100);
+
+    return () => clearInterval(timer);
+  }, [playing, status]);
+
+  const onTick = () => {
+    setNumbers((num) =>
+      num
+        .map((n) =>
+          n.done && n.lifetime > 0
+            ? { ...n, lifetime: +(n.lifetime - 0.1).toFixed(1) }
+            : n
+        )
+        .filter((n) => n.lifetime > 0)
+    );
+  };
   return (
-    <div className="border-2 h-[400px] relative bg-slate-50">
-      {numbers.map((n) => (
-        <NumCircle
-          key={n.id}
-          x={n.x}
-          y={n.y}
-          value={n.id}
-          done={n.done}
-          isTarget={n.id === target}
-          onClick={() => onNumberClick && onNumberClick(n.id)}
-        />
-      ))}
+    <div>
+      <div className="border-3 h-[500px] rounded-xs relative overflow-hidden bg-slate-50">
+        {playing &&
+          numbers.map((n) => (
+            <NumCircle
+              key={n.id}
+              x={n.x}
+              y={n.y}
+              done={n.done}
+              lifetime={n.lifetime}
+              value={n.id}
+              onClick={() => onNumberClick && onNumberClick(n.id)}
+            />
+          ))}
+      </div>
+      {playing && <p className="text-base"> Next: {target}</p>}
     </div>
   );
 }

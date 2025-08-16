@@ -6,35 +6,42 @@ function Header({
   setPoints,
   time,
   playing,
-  start,
-  stop,
+  onStart,
+  status,
+  onRestart,
   autoPlay,
-  setAutoPlay,
+  OnAutoPlay,
 }) {
   return (
     <div className="mb-4">
-      <h2 className="font-bold text-lg">Clear The Points</h2>
-      <div className="mt-2">
-        <div className="flex w-52 gap-6 items-center justify-start">
-          <p>Points:</p>
-          <Input value={points} onChange={(v) => setPoints(Number(v) || 1)} />
-        </div>
-        <div className="flex w-[190px] gap-6 items-center justify-start">
-          <p>Time:</p>
-          <p>{time}s</p>
-        </div>
-        <div className="flex items-center gap-2 mt-2">
-          <button
-            onClick={() => setAutoPlay(!autoPlay)}
-            className={`mt-2 px-3 py-1 text-sm rounded-xs ${
-              autoPlay ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
-          >
-            {autoPlay ? "Auto-play: On" : "Auto-play: Off"}
-          </button>
-        </div>
+      <h2 className="font-bold text-lg">{status}</h2>
+
+      <div className="flex  gap-26 items-center mt-3 justify-start">
+        <p>Points:</p>
+        <Input
+          value={points}
+          disabled={playing}
+          onChange={(n) => setPoints(Number(n))}
+        />
       </div>
-      <Button onStart={start} onStop={stop} playing={playing} />
+      <div className="flex gap-[113px] items-center mt-1 justify-start">
+        <p>Time:</p>
+        <p>{time}s</p>
+      </div>
+
+      <div className="flex items-center gap-2 ">
+        {!playing ? (
+          <Button onClick={onStart}>Play</Button>
+        ) : (
+          <Button onClick={onRestart}>Restart</Button>
+        )}
+
+        {playing && status !== "GAME OVER" && (
+          <Button onClick={OnAutoPlay}>
+            {autoPlay ? "Auto-play: Off" : "Auto-play: On"}
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

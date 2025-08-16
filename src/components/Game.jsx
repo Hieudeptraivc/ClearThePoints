@@ -2,36 +2,34 @@ import { useEffect, useState, useRef } from "react";
 import Header from "./Header";
 import GameBoard from "./GameBoard";
 
-function makeNumbers(count, width = 560, height = 360) {
+function makeNumbers(count, width = 520, height = 460) {
   const padding = 20;
   const items = [];
   for (let i = 1; i <= count; i++) {
     const x = Math.floor(Math.random() * (width - padding * 2)) + padding;
     const y = Math.floor(Math.random() * (height - padding * 2)) + padding;
-    items.push({ id: i, x, y, done: false });
+    items.push({ id: i, x, y, done: false, lifetime: 3 });
   }
   return items;
 }
 
 function Game() {
-  const [points, setPoints] = useState(10);
+  const [points, setPoints] = useState(5);
   const [time, setTime] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const [status, setStatus] = useState("LET'S PLAY"); // start, playing, finished, game over
   const [autoPlay, setAutoPlay] = useState(false);
-  const [numbers, setNumbers] = useState(() => makeNumbers(points));
+  const [numbers, setNumbers] = useState();
   const [target, setTarget] = useState(1);
 
   const timerRef = useRef(null);
   const autoplayRef = useRef(null);
 
   useEffect(() => {
-    // regenerate when points change (but not while playing)
-    if (!playing) setNumbers(makeNumbers(points));
-  }, [points]);
-
-  useEffect(() => {
     if (playing) {
-      timerRef.current = setInterval(() => setTime((t) => t + 1), 1000);
+      timerRef.current = setInterval(() => {
+        setTime((t) => +(t + 0.1).toFixed(1));
+      }, 100);
     } else {
       clearInterval(timerRef.current);
       timerRef.current = null;
@@ -40,66 +38,78 @@ function Game() {
   }, [playing]);
 
   useEffect(() => {
-    // autoplay logic: when enabled and playing, click the current target automatically
     if (autoPlay && playing) {
       autoplayRef.current = setInterval(() => {
-        // find the current number and mark it as clicked
         handleNumberClick(target);
-      }, 300);
+      }, 1000);
     } else {
       clearInterval(autoplayRef.current);
       autoplayRef.current = null;
     }
     return () => clearInterval(autoplayRef.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoPlay, playing, target]);
 
-  function start() {
+  useEffect(() => {
+    if (numbers?.length === 0) {
+      setStatus("ALL CLEARED");
+      setPlaying(false);
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }, [numbers]);
+  const handleStart = function () {
     setNumbers(makeNumbers(points));
     setTarget(1);
     setTime(0);
+    setAutoPlay(false);
     setPlaying(true);
-  }
-
-  function stop() {
+  };
+  const handleRestart = function () {
+    setStatus("LET'S PLAY");
     setPlaying(false);
-  }
-
-  function handleNumberClick(id) {
-    // only accept correct next number
-    setNumbers((prev) => {
-      const idx = prev.findIndex((p) => p.id === id);
-      if (idx === -1) return prev;
-      // if clicked number is the current target
-      if (id === target) {
-        const next = [...prev];
-        next[idx] = { ...next[idx], done: true };
-        // advance target
-        setTarget((t) => t + 1);
-        // if finished
-        if (id >= points) setPlaying(false);
-        return next;
-      }
-      return prev;
-    });
-  }
+    setTime(0);
+    setTarget(1);
+  };
+  const handleGameOver = function () {
+    // setPlaying(false);
+    setStatus("GAME OVER");
+    clearInterval(timerRef.current);
+    timerRef.current = null;
+  };
+  const handleAutoPlay = function () {
+    setAutoPlay(!autoPlay);
+  };
+  const handleNumberClick = function (id) {
+    console.log(`Clicked number: ${id}, Target: ${target}, numbers:`, numbers);
+    if (id !== target) {
+      handleGameOver();
+      return;
+    }
+    setNumbers((prev) =>
+      prev?.map((n) => (n.id === id ? { ...n, done: true } : n))
+    );
+    setTarget((t) => t + 1);
+  };
 
   return (
-    <div className="border p-4 bg-white w-[600px]">
+    <div className="border p-12 bg-white w-[650px]">
       <Header
         points={points}
         setPoints={setPoints}
         time={time}
         playing={playing}
-        start={start}
-        stop={stop}
+        onStart={handleStart}
+        onRestart={handleRestart}
+        status={status}
         autoPlay={autoPlay}
-        setAutoPlay={setAutoPlay}
+        OnAutoPlay={handleAutoPlay}
       />
       <GameBoard
-        numbers={numbers}
-        onNumberClick={handleNumberClick}
+        status={status}
         target={target}
+        numbers={numbers}
+        setNumbers={setNumbers}
+        onNumberClick={handleNumberClick}
         playing={playing}
       />
     </div>

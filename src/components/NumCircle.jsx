@@ -1,26 +1,26 @@
-function NumCircle({ x = 0, y = 0, value, done, isTarget, onClick }) {
-  const size = 36;
+function NumCircle({ x = 0, y = 0, value, lifetime, done, onClick }) {
   const style = {
     left: x,
     top: y,
-    width: size,
-    height: size,
-    lineHeight: `${size}px`,
+    width: 50,
+    height: 50,
   };
+
   return (
     <div
-      onClick={onClick}
-      className={`absolute rounded-full border flex items-center justify-center cursor-pointer select-none
-        ${
-          done
-            ? "bg-green-300 text-white"
-            : isTarget
-            ? "bg-yellow-300"
-            : "bg-white"
-        }`}
+      onClick={() => !done && onClick(value)}
       style={style}
+      className={`absolute flex flex-col items-center justify-center
+        rounded-full  cursor-pointer select-none border-red-500 border-2
+        ${done && lifetime <= 0 ? "opacity-0" : "opacity-100"}
+      `}
     >
-      {value}
+      <span className="text-[11px] font-medium text-black">{value}</span>
+      {done && (
+        <span className="text-[11px] text-white leading-none">
+          {lifetime.toFixed(1)}s
+        </span>
+      )}
     </div>
   );
 }
