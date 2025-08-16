@@ -2,12 +2,11 @@ import { useEffect, useState, useRef } from "react";
 import Header from "./Header";
 import GameBoard from "./GameBoard";
 
-function makeNumbers(count, width = 520, height = 460) {
-  const padding = 5;
+function makeNumbers(count) {
   const items = [];
   for (let i = 1; i <= count; i++) {
-    const x = Math.floor(Math.random() * (width - padding * 2)) + padding;
-    const y = Math.floor(Math.random() * (height - padding * 2)) + padding;
+    const x = Math.random() * 90;
+    const y = Math.random() * 90;
     items.push({ id: i, x, y, done: false, lifetime: 3 });
   }
   return items;

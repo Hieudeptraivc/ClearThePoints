@@ -12,8 +12,8 @@ function NumCircle({
   const INIT_LIFETIME = 3;
   const opacity = Math.max(0, Math.min(1, lifetime / INIT_LIFETIME));
   const style = {
-    left: `${x}px`,
-    top: `${y}px`,
+    left: `${x}%`,
+    top: `${y}%`,
     zIndex,
     opacity,
     transform: `scale(${0.9 + 0.1 * opacity})`,
@@ -24,10 +24,9 @@ function NumCircle({
     <div
       onClick={() => !done && onClick(value)}
       style={style}
-      className={`absolute w-[50px] h-[50px] rounded-full cursor-pointer select-none border border-red-600 flex flex-col items-center justify-center box-border
-        transition-opacity duration-300 transform 
-        ${done ? `bg-red-600 text-white` : "bg-white text-black opacity-100"}
-      `}
+      className={`absolute w-10 h-10 sm:w-12 sm:h-12 rounded-full cursor-pointer 
+  flex flex-col items-center justify-center border border-red-600
+  ${done ? "bg-red-600 text-white" : "bg-white text-black opacity-100"}`}
     >
       <span className="text-[11px] text-black font-semibold">{value}</span>
       {done && (
