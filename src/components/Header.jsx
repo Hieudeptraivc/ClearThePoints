@@ -14,7 +14,17 @@ function Header({
 }) {
   return (
     <div className="mb-4">
-      <h2 className="font-bold text-lg">{status}</h2>
+      <h2
+        className={`font-bold text-xl ${
+          status === "ALL CLEARED"
+            ? "text-green-600"
+            : status === "GAME OVER"
+            ? "text-red-600"
+            : "text-gray-800"
+        }`}
+      >
+        {status}
+      </h2>
 
       <div className="flex  gap-26 items-center mt-3 justify-start">
         <p>Points:</p>
