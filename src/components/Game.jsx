@@ -3,7 +3,7 @@ import Header from "./Header";
 import GameBoard from "./GameBoard";
 
 function makeNumbers(count, width = 520, height = 460) {
-  const padding = 20;
+  const padding = 5;
   const items = [];
   for (let i = 1; i <= count; i++) {
     const x = Math.floor(Math.random() * (width - padding * 2)) + padding;
@@ -50,29 +50,34 @@ function Game() {
   }, [autoPlay, playing, target]);
 
   useEffect(() => {
-    if (numbers?.length === 0) {
-      setStatus("ALL CLEARED");
-      setPlaying(false);
-      clearInterval(timerRef.current);
-      timerRef.current = null;
+    if (playing && !numbers?.some((n) => n.lifetime > 0)) {
+      handleGameFinished();
     }
-  }, [numbers]);
+  }, [numbers, playing]);
+
   const handleStart = function () {
+    if (points < 1) {
+      return;
+    }
     setNumbers(makeNumbers(points));
-    setTarget(1);
-    setTime(0);
-    setAutoPlay(false);
     setPlaying(true);
   };
   const handleRestart = function () {
     setStatus("LET'S PLAY");
     setPlaying(false);
+    setAutoPlay(false);
     setTime(0);
     setTarget(1);
   };
   const handleGameOver = function () {
     // setPlaying(false);
+    setAutoPlay(false);
     setStatus("GAME OVER");
+    clearInterval(timerRef.current);
+    timerRef.current = null;
+  };
+  const handleGameFinished = function () {
+    setStatus("ALL CLEARED");
     clearInterval(timerRef.current);
     timerRef.current = null;
   };
@@ -92,7 +97,7 @@ function Game() {
   };
 
   return (
-    <div className="border p-12 bg-white w-[650px]">
+    <div className="border p-11 bg-white w-[650px]">
       <Header
         points={points}
         setPoints={setPoints}
@@ -105,6 +110,7 @@ function Game() {
         OnAutoPlay={handleAutoPlay}
       />
       <GameBoard
+        points={points}
         status={status}
         target={target}
         numbers={numbers}

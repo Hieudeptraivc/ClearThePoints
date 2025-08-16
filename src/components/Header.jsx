@@ -18,11 +18,18 @@ function Header({
 
       <div className="flex  gap-26 items-center mt-3 justify-start">
         <p>Points:</p>
-        <Input
-          value={points}
-          disabled={playing}
-          onChange={(n) => setPoints(Number(n))}
-        />
+        <div className="flex items-center gap-2">
+          <Input
+            value={points}
+            disabled={playing}
+            onChange={(n) => setPoints(Number(n))}
+          />
+          {points < 1 && (
+            <p className="text-[13px]">
+              Please set points to play (Greater than 0)
+            </p>
+          )}
+        </div>
       </div>
       <div className="flex gap-[113px] items-center mt-1 justify-start">
         <p>Time:</p>
@@ -36,9 +43,9 @@ function Header({
           <Button onClick={onRestart}>Restart</Button>
         )}
 
-        {playing && status !== "GAME OVER" && (
+        {playing && status === "LET'S PLAY" && (
           <Button onClick={OnAutoPlay}>
-            {autoPlay ? "Auto-play: Off" : "Auto-play: On"}
+            {autoPlay ? "Auto-play OFF" : "Auto-play ON"}
           </Button>
         )}
       </div>

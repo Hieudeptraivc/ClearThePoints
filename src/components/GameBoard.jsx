@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import NumCircle from "./NumCircle";
 
 function GameBoard({
+  points,
   numbers = [],
   target,
   status,
@@ -34,19 +35,26 @@ function GameBoard({
     <div>
       <div className="border-3 h-[500px] rounded-xs relative overflow-hidden bg-slate-50">
         {playing &&
-          numbers.map((n) => (
-            <NumCircle
-              key={n.id}
-              x={n.x}
-              y={n.y}
-              done={n.done}
-              lifetime={n.lifetime}
-              value={n.id}
-              onClick={() => onNumberClick && onNumberClick(n.id)}
-            />
-          ))}
+          numbers.map((n) => {
+            const baseZ = points - n.id + 1;
+            const zIndex = n.id === target ? baseZ + points + 10 : baseZ;
+            return (
+              <NumCircle
+                key={n.id}
+                x={n.x}
+                y={n.y}
+                zIndex={zIndex}
+                done={n.done}
+                lifetime={n.lifetime}
+                value={n.id}
+                onClick={() => onNumberClick && onNumberClick(n.id)}
+              />
+            );
+          })}
       </div>
-      {playing && <p className="text-base"> Next: {target}</p>}
+      {playing && points >= target && (
+        <p className="text-base"> Next: {target}</p>
+      )}
     </div>
   );
 }
